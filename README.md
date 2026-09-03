@@ -88,21 +88,19 @@ Mozilla Firefox
 
 # Screenshots
 
-![Screenshot1](screenshots/main-interface.png)
+![Screenshot1](screenshots/Sceenshot1.png)
 
 **Main Interface** – Shows the professional Paint-style interface with the toolbar, drawing canvas, settings, and Confusion Meter.
 
-![Screenshot2](screenshots/confusion-ai.png)
+![Screenshot2](2.png)
 
 **Confusion AI** – Shows the built-in AI chatbot responding to the user's actual message with context-aware sarcastic responses.
 
-![Screenshot3](screenshots/unreliable-tools.png)
+![Screenshot3](3.png)
 
 **Unreliable Tools in Action** – Demonstrates the drawing tools behaving unexpectedly while the user is interacting with the canvas.
 
 # Diagrams
-
-![Workflow](screenshots/workflow-diagram.png)
 
 **Workflow:**
 User selects a tool → Hidden function is assigned → User interacts with the canvas → Function may change unpredictably → Confusion Meter increases → AI and notifications react → Achievements may unlock → Session statistics are updated.
