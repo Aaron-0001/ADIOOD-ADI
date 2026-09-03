@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADIOOD ADI</title>
+<style>
+  :root{
+    --bg-1:#eef1f7;
+    --bg-2:#e2e7f2;
+    --panel:#ffffff;
+    --ink:#1c2130;
+    --ink-soft:#5b6377;
+    --line:#dfe3ee;
+    --accent:#5a4bda;
+    --accent-2:#2fb6a3;
+    --warn:#e0663f;
+    --gold:#e0a726;
+    --shadow: 0 10px 30px rgba(30,35,60,.10);
+    --radius:16px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 700px at 10% -10%, #eef2ff 0%, transparent 60%),
+      radial-gradient(1000px 600px at 110% 10%, #e9fbf6 0%, transparent 55%),
+      linear-gradient(180deg,var(--bg-1),var(--bg-2));
+    color:var(--ink);
+    min-height:100vh;
+  }
+
+  /* ---------- Header ---------- */
+  header.app-header{
+    padding:22px 28px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .brand{display:flex; align-items:center; gap:14px;}
+  .brand-mark{
+    width:46px;height:46px;border-radius:13px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow);
+    font-size:22px;
+  }
+  .brand h1{
+    margin:0;
+    font-size:26px;
+    letter-spacing:.2px;
+    font-weight:800;
+  }
+  .brand p.tagline{
+    margin:2px 0 0;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .header-right{
+    text-align:right;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+  .header-right .purpose{
+    font-weight:700;
+    color:var(--warn);
+  }
+
+  /* ---------- Notification bar ---------- */
+  #notifWrap{
+    padding:0 28px;
+    position:sticky;
+    top:0;
+    z-index:400;
+  }
+  #notifBar{
+    max-width:1400px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    background:linear-gradient(120deg,#2a2350,#3a2f6e);
+    color:#fff;
+    border-radius:16px;
+    padding:0 24px;
+    height:0;
+    overflow:hidden;
+    opacity:0;
+    box-shadow:0 16px 34px rgba(30,20,70,.28);
+    transform:translateY(-14px);
+    transition:height .38s cubic-bezier(.34,1.2,.64,1), opacity .3s ease, transform .38s cubic-bezier(.34,1.2,.64,1), background .3s ease;
+  }
+  #notifBar.show{
+    height:74px;
+    opacity:1;
+    transform:translateY(0);
+    margin-bottom:16px;
+  }
+  #notifBar.type-warn{ background:linear-gradient(120deg,#7a3420,#a24a2c); }
+  #notifBar.type-success{ background:linear-gradient(120deg,#134a44,#1f7566); }
+  #notifBar .notif-icon{
+    font-size:28px;
+    flex:none;
+  }
+  #notifBar .notif-text{
+    font-size:19px;
+    font-weight:700;
+    line-height:1.25;
+    letter-spacing:.1px;
+  }
+
+  /* ---------- Layout ---------- */
+  .workspace{
+    display:grid;
+    grid-template-columns: 300px 1fr 300px;
+    gap:20px;
+    padding:0 28px 28px;
+    align-items:start;
+  }
+  @media (max-width: 1080px){
+    .workspace{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background:var(--panel);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid var(--line);
+    padding:18px;
+  }
+  .panel h2{
+    margin:0 0 12px;
+    font-size:15px;
+    font-weight:800;
+    letter-spacing:.2px;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel h2 .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+  }
+
+  /* ---------- Toolbar ---------- */
+  .tool-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  button.tool-btn{
+    border:1.5px solid var(--line);
+    background:#f9faff;
+    border-radius:12px;
+    padding:14px 8px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  button.tool-btn .icon{ font-size:24px; }
+  button.tool-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(90,75,218,.18);
+    background:#f1efff;
+  }
+  button.tool-btn.active{
+    background:linear-gradient(135deg,var(--accent),#7a6cf0);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 6px 18px rgba(90,75,218,.35);
+  }
+  button.tool-btn:active{ transform:translateY(0) scale(.97); }
+
+  .util-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  button.util-btn{
+    border:1.5px solid var(--line);
+    background:#f9faff;
+    border-radius:12px;
+    padding:12px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--ink);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button.util-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(30,35,60,.12);}
+  button.util-btn.save-btn{
+    grid-column:1 / -1;
+    background:linear-gradient(135deg,var(--accent-2),#38d6b6);
+    color:#fff;
+    border:none;
+    padding:14px;
+    font-size:15.5px;
+  }
+  button.util-btn.clear-btn{
+    grid-column:1 / -1;
+    background:#fff2ee;
+    color:var(--warn);
+    border:1.5px solid #f4c7b6;
+  }
+
+  /* ---------- Settings ---------- */
+  .setting{ margin-bottom:17px; }
+  .setting label{
+    display:flex;
+    justify-content:space-between;
+    font-size:15px;
+    font-weight:700;
+    margin-bottom:7px;
+    color:var(--ink);
+  }
+  .setting label span.val{
+    color:var(--accent);
+    font-weight:800;
+  }
+  .setting input[type=range]{
+    width:100%;
+    accent-color:var(--accent);
+    height:22px;
+  }
+  .setting input[type=color]{
+    width:100%;
+    height:40px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:2px;
+    cursor:pointer;
+    background:#f9faff;
+  }
+
+  /* ---------- Canvas Center ---------- */
+  .canvas-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .canvas-card{
+    background:var(--panel);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid var(--line);
+    padding:16px;
+  }
+  .canvas-toolbar-strip{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .canvas-toolbar-strip .active-tool-label{
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--ink-soft);
+    background:#f4f5fb;
+    padding:6px 12px;
+    border-radius:20px;
+  }
+  .canvas-toolbar-strip .active-tool-label b{ color:var(--accent); }
+  #canvasHolder{
+    width:100%;
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:
+      linear-gradient(45deg, #fbfbfd 25%, transparent 25%),
+      linear-gradient(-45deg, #fbfbfd 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #fbfbfd 75%),
+      linear-gradient(-45deg, transparent 75%, #fbfbfd 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+  #paintCanvas{
+    width:100%;
+    display:block;
+    touch-action:none;
+    cursor:crosshair;
+    background:#ffffff;
+  }
+
+  /* Confusion meter */
+  .meter-card{
+    background:var(--panel);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid var(--line);
+    padding:16px 18px;
+  }
+  .meter-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:8px;
+  }
+  .meter-top h2{ margin:0; font-size:14px; font-weight:800; letter-spacing:.4px;}
+  .meter-pct{ font-size:20px; font-weight:900; color:var(--accent);}
+  .meter-track{
+    width:100%;
+    height:16px;
+    border-radius:10px;
+    background:#eef0f8;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .meter-fill{
+    height:100%;
+    width:10%;
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--accent-2),var(--gold),var(--warn));
+    transition:width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .meter-msg{
+    margin-top:8px;
+    font-size:13px;
+    color:var(--ink-soft);
+    font-weight:600;
+    min-height:18px;
+  }
+
+  /* Challenge card */
+  .challenge-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .challenge-text{
+    font-size:14px;
+    color:var(--ink-soft);
+    font-weight:600;
+    flex:1;
+    min-width:200px;
+  }
+  button.challenge-btn{
+    border:none;
+    background:linear-gradient(135deg,var(--gold),#f0c15a);
+    color:#3a2c00;
+    font-weight:800;
+    padding:12px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:13.5px;
+    white-space:nowrap;
+    transition:transform .12s ease;
+  }
+  button.challenge-btn:hover{ transform:translateY(-2px); }
+
+  /* ---------- Right column ---------- */
+  .stat-list{ display:flex; flex-direction:column; gap:10px; }
+  .stat-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    padding:8px 10px;
+    background:#f7f8fd;
+    border-radius:9px;
+  }
+  .stat-row b{ color:var(--ink); font-weight:800; }
+  .stat-row span.label{ color:var(--ink-soft); font-weight:600;}
+
+  button.report-btn{
+    margin-top:14px;
+    width:100%;
+    border:none;
+    background:linear-gradient(135deg,var(--accent),#7a6cf0);
+    color:#fff;
+    padding:12px;
+    border-radius:12px;
+    font-weight:800;
+    cursor:pointer;
+    font-size:13.5px;
+  }
+
+  .achievement-cabinet{ margin-top:18px; }
+  .cabinet-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .cab-item{
+    background:#f7f8fd;
+    border-radius:10px;
+    padding:9px;
+    text-align:center;
+    font-size:20px;
+    opacity:.25;
+    filter:grayscale(1);
+    transition:all .3s ease;
+    border:1px solid var(--line);
+  }
+  .cab-item.unlocked{
+    opacity:1;
+    filter:none;
+    background:linear-gradient(135deg,#fff7e0,#fff);
+    border-color:var(--gold);
+    box-shadow:0 4px 12px rgba(224,167,38,.25);
+  }
+  .cab-item .cab-name{
+    display:block;
+    font-size:9.5px;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-top:3px;
+    line-height:1.2;
+  }
+
+  /* ---------- Chatbot ---------- */
+  .chatbot-wrap{
+    position:fixed;
+    bottom:22px;
+    left:22px;
+    z-index:500;
+    font-family:inherit;
+  }
+  .chat-fab{
+    width:62px;height:62px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 10px 26px rgba(90,75,218,.4);
+    border:none;
+    color:#fff;
+    font-size:26px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .25s cubic-bezier(.4,0,.2,1);
+  }
+  .chat-fab:hover{ transform:scale(1.07); }
+  .chat-fab.hidden{ transform:scale(0); opacity:0; pointer-events:none; }
+
+  .chat-panel{
+    width:340px;
+    max-width:90vw;
+    height:460px;
+    background:var(--panel);
+    border-radius:18px;
+    box-shadow:0 20px 50px rgba(20,25,50,.28);
+    border:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    transform:scale(0);
+    transform-origin:bottom left;
+    opacity:0;
+    transition:transform .28s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;
+    position:absolute;
+    bottom:0;
+    left:0;
+  }
+  .chat-panel.open{
+    transform:scale(1);
+    opacity:1;
+  }
+  .chat-head{
+    background:linear-gradient(135deg,var(--accent),#7a6cf0);
+    color:#fff;
+    padding:14px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .chat-head .title{ font-weight:800; font-size:14.5px; }
+  .chat-head .status{ font-size:11.5px; opacity:.85; }
+  .chat-head button.min-btn{
+    background:rgba(255,255,255,.18);
+    border:none;
+    color:#fff;
+    width:26px;height:26px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .chat-body{
+    flex:1;
+    overflow-y:auto;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    background:#f8f9fd;
+  }
+  .msg{
+    max-width:85%;
+    padding:9px 12px;
+    border-radius:12px;
+    font-size:13.5px;
+    line-height:1.4;
+  }
+  .msg.bot{
+    background:#fff;
+    border:1px solid var(--line);
+    align-self:flex-start;
+    border-bottom-left-radius:4px;
+  }
+  .msg.user{
+    background:linear-gradient(135deg,var(--accent),#7a6cf0);
+    color:#fff;
+    align-self:flex-end;
+    border-bottom-right-radius:4px;
+  }
+  .msg.typing{
+    background:#fff;
+    border:1px solid var(--line);
+    align-self:flex-start;
+    font-style:italic;
+    color:var(--ink-soft);
+  }
+  .chat-input-row{
+    display:flex;
+    gap:8px;
+    padding:12px;
+    border-top:1px solid var(--line);
+    background:#fff;
+  }
+  .chat-input-row input{
+    flex:1;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:9px 11px;
+    font-size:13.5px;
+    outline:none;
+  }
+  .chat-input-row input:focus{ border-color:var(--accent); }
+  .chat-input-row button{
+    border:none;
+    background:var(--accent);
+    color:#fff;
+    width:38px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+  }
+
+  /* ---------- Modal (Session Report only) ---------- */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,18,32,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:900;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal-box{
+    background:#fff;
+    border-radius:20px;
+    width:520px;
+    max-width:92vw;
+    max-height:85vh;
+    overflow-y:auto;
+    padding:28px;
+    box-shadow:0 30px 70px rgba(0,0,0,.35);
+    transform:translateY(20px) scale(.97);
+    transition:transform .28s cubic-bezier(.34,1.56,.64,1);
+  }
+  .modal-overlay.open .modal-box{ transform:translateY(0) scale(1); }
+  .modal-box h2{ margin:0 0 2px; font-size:20px; font-weight:900;}
+  .modal-box .sub{ color:var(--ink-soft); font-size:13.5px; margin-bottom:18px; font-style:italic; }
+  .report-row{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:14px;
+  }
+  .report-row span.label{ color:var(--ink-soft); font-weight:600;}
+  .report-row b{ font-weight:800; }
+  .report-final{
+    margin-top:18px;
+    background:#f6f5ff;
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:13.5px;
+    line-height:1.7;
+  }
+  .report-final b{ display:block; color:var(--accent); }
+  button.close-report{
+    margin-top:20px;
+    width:100%;
+    border:none;
+    background:linear-gradient(135deg,var(--accent),#7a6cf0);
+    color:#fff;
+    padding:13px;
+    border-radius:12px;
+    font-weight:800;
+    cursor:pointer;
+    font-size:14px;
+  }
+
+  /* ---------- Achievement notification ---------- */
+  #achievementLayer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:800;
+  }
+  .achv-dim{
+    position:absolute;
+    inset:0;
+    background:rgba(10,12,25,0);
+    backdrop-filter:blur(0px);
+    transition:all .4s ease;
+  }
+  .achv-dim.on{
+    background:rgba(10,12,25,.18);
+    backdrop-filter:blur(2px);
+  }
+  .achv-toast{
+    position:absolute;
+    top:26px;
+    right:26px;
+    width:330px;
+    max-width:88vw;
+    background:linear-gradient(145deg,#20233a,#171929);
+    color:#fff;
+    border-radius:18px;
+    padding:18px 18px 18px 16px;
+    box-shadow:0 20px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06);
+    display:flex;
+    gap:14px;
+    align-items:center;
+    transform:translateX(120%);
+    opacity:0;
+    transition:transform .5s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+    overflow:hidden;
+  }
+  .achv-toast.show{ transform:translateX(0); opacity:1; }
+  .achv-toast .badge-wrap{
+    position:relative;
+    width:58px;height:58px;
+    flex:none;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffe9a8, var(--gold) 70%);
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;
+    box-shadow:0 0 0 4px rgba(224,167,38,.25), 0 0 22px rgba(224,167,38,.55);
+    animation:badgePop .6s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes badgePop{
+    0%{ transform:scale(0) rotate(-30deg); }
+    70%{ transform:scale(1.15) rotate(6deg); }
+    100%{ transform:scale(1) rotate(0deg); }
+  }
+  .achv-toast .txt{ flex:1; min-width:0; }
+  .achv-toast .eyebrow{
+    font-size:10.5px;
+    font-weight:800;
+    letter-spacing:.6px;
+    color:var(--gold);
+    margin-bottom:3px;
+  }
+  .achv-toast .name{ font-size:14.5px; font-weight:900; margin-bottom:3px; }
+  .achv-toast .desc{ font-size:12px; color:#c7cadd; line-height:1.4; }
+  .achv-toast .spark{
+    position:absolute;
+    border-radius:50%;
+    background:#fff6d6;
+    pointer-events:none;
+    animation:sparkFly 1s ease-out forwards;
+  }
+  @keyframes sparkFly{
+    0%{ transform:translate(0,0) scale(1); opacity:1; }
+    100%{ transform:translate(var(--dx), var(--dy)) scale(0); opacity:0; }
+  }
+
+  footer.foot-note{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:12px;
+    padding:10px 0 30px;
+  }
+
+  ::selection{ background:rgba(90,75,218,.25); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-mark">🎨</div>
+    <div>
+      <h1>ADIOOD ADI</h1>
+      <p class="tagline">The world's least reliable drawing application.</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div>Session build 5.0.0 &middot; Desktop &amp; touch ready</div>
+    <div class="purpose">Purpose: Absolutely none.</div>
+  </div>
+</header>
+
+<div id="notifWrap">
+  <div id="notifBar">
+    <div class="notif-icon" id="notifIcon">💬</div>
+    <div class="notif-text" id="notifText">Welcome to ADIOOD ADI.</div>
+  </div>
+</div>
+
+<div class="workspace">
+
+  <!-- LEFT: Tools + Settings -->
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <section class="panel">
+      <h2><span class="dot"></span>Tools</h2>
+      <div class="tool-grid">
+        <button class="tool-btn active" data-tool="pencil"><span class="icon">✏️</span>Pencil</button>
+        <button class="tool-btn" data-tool="brush"><span class="icon">🖌️</span>Brush</button>
+        <button class="tool-btn" data-tool="eraser"><span class="icon">🧹</span>Eraser</button>
+        <button class="tool-btn" data-tool="colorpicker"><span class="icon">🎯</span>Color Pick</button>
+        <button class="tool-btn" data-tool="fill"><span class="icon">🪣</span>Fill</button>
+      </div>
+      <div class="util-row">
+        <button class="util-btn" id="undoBtn">↶ Undo</button>
+        <button class="util-btn" id="redoBtn">↷ Redo</button>
+      </div>
+      <div class="util-row">
+        <button class="util-btn save-btn" id="saveBtn">💾 Save</button>
+      </div>
+      <div class="util-row">
+        <button class="util-btn clear-btn" id="clearBtn">🗑️ Clear</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2><span class="dot"></span>Settings</h2>
+
+      <div class="setting">
+        <label>Brush Size <span class="val" id="brushSizeVal">6</span></label>
+        <input type="range" id="brushSize" min="1" max="40" value="6">
+      </div>
+
+      <div class="setting">
+        <label>Color</label>
+        <input type="color" id="colorInput" value="#5a4bda">
+      </div>
+
+      <div class="setting">
+        <label>Opacity <span class="val" id="opacityVal">100%</span></label>
+        <input type="range" id="opacitySlider" min="5" max="100" value="100">
+      </div>
+
+      <div class="setting">
+        <label>Smoothness <span class="val" id="smoothVal">50%</span></label>
+        <input type="range" id="smoothSlider" min="0" max="100" value="50">
+      </div>
+
+      <div class="setting">
+        <label>Drawing Quality <span class="val" id="qualityVal">Standard</span></label>
+        <input type="range" id="qualitySlider" min="0" max="2" value="1" step="1">
+      </div>
+
+      <div class="setting">
+        <label>Canvas Sensitivity <span class="val" id="sensVal">50%</span></label>
+        <input type="range" id="sensSlider" min="0" max="100" value="50">
+      </div>
+
+      <div class="setting">
+        <label>Artistic Stability <span class="val" id="stabVal">50%</span></label>
+        <input type="range" id="stabSlider" min="0" max="100" value="50">
+      </div>
+    </section>
+  </div>
+
+  <!-- CENTER: Canvas -->
+  <div class="canvas-wrap">
+    <div class="canvas-card">
+      <div class="canvas-toolbar-strip">
+        <div class="active-tool-label">Active tool: <b id="activeToolLabel">Pencil</b></div>
+        <div class="active-tool-label">Strokes drawn: <b id="strokeCountLabel">0</b></div>
+      </div>
+      <div id="canvasHolder">
+        <canvas id="paintCanvas" width="1000" height="560"></canvas>
+      </div>
+    </div>
+
+    <div class="meter-card">
+      <div class="meter-top">
+        <h2>USER CONFUSION</h2>
+        <div class="meter-pct"><span id="meterPct">10</span>%</div>
+      </div>
+      <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-msg" id="meterMsg">Confusion tracking initialized.</div>
+    </div>
+
+    <div class="panel challenge-card">
+      <div class="challenge-text" id="challengeText">Click for a completely pointless drawing prompt.</div>
+      <button class="challenge-btn" id="challengeBtn">💡 Give me a useless idea</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: Stats + Achievements -->
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <section class="panel">
+      <h2><span class="dot"></span>Session Statistics</h2>
+      <div class="stat-list">
+        <div class="stat-row"><span class="label">Time spent</span><b id="statTime">0:00</b></div>
+        <div class="stat-row"><span class="label">Buttons clicked</span><b id="statClicks">0</b></div>
+        <div class="stat-row"><span class="label">Tool functions changed</span><b id="statRemaps">0</b></div>
+        <div class="stat-row"><span class="label">Questions asked to AI</span><b id="statQuestions">0</b></div>
+        <div class="stat-row"><span class="label">Tool settings changed</span><b id="statSettings">0</b></div>
+        <div class="stat-row"><span class="label">Achievements unlocked</span><b id="statAch">0 / 12</b></div>
+      </div>
+      <button class="report-btn" id="reportBtn">📊 View Session Report</button>
+    </section>
+
+    <section class="panel achievement-cabinet">
+      <h2><span class="dot"></span>Achievement Cabinet</h2>
+      <div class="cabinet-grid" id="cabinetGrid"></div>
+    </section>
+  </div>
+
+</div>
+
+<footer class="foot-note">ADIOOD ADI runs entirely in your browser. No data leaves this page. No purpose is served.</footer>
+
+<!-- Chatbot -->
+<div class="chatbot-wrap">
+  <button class="chat-fab" id="chatFab">🤖</button>
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-head">
+      <div>
+        <div class="title">🤖 Confusion AI</div>
+        <div class="status" id="chatStatus">Probably online</div>
+      </div>
+      <button class="min-btn" id="chatMinBtn">—</button>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask something you'll regret...">
+      <button id="chatSendBtn">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- Session report modal -->
+<div class="modal-overlay" id="reportOverlay">
+  <div class="modal-box">
+    <h2>ADIOOD ADI — SESSION REPORT</h2>
+    <div class="sub">An entirely unnecessary performance review.</div>
+    <div class="report-row"><span class="label">Time spent</span><b id="repTime">0:00</b></div>
+    <div class="report-row"><span class="label">Buttons clicked</span><b id="repClicks">0</b></div>
+    <div class="report-row"><span class="label">Tool functions changed</span><b id="repRemaps">0</b></div>
+    <div class="report-row"><span class="label">Questions asked to AI</span><b id="repQuestions">0</b></div>
+    <div class="report-row"><span class="label">Achievements unlocked</span><b id="repAch">0 / 12</b></div>
+    <div class="report-row"><span class="label">Tool settings changed</span><b id="repSettings">0</b></div>
+    <div class="report-final">
+      <b>Overall result</b>
+      You spent several minutes accomplishing something that didn't need to be accomplished.
+      <b style="margin-top:10px;">Efficiency rating</b>
+      Unnecessarily complicated.
+      <b style="margin-top:10px;">Final assessment</b>
+      You survived ADIOOD ADI.
+      <b style="margin-top:10px;">Purpose achieved</b>
+      Absolutely none.
+      <b style="margin-top:10px;">Professional opinion</b>
+      Please do not put this on your résumé.
+    </div>
+    <button class="close-report" id="closeReportBtn">Close Report</button>
+  </div>
+</div>
+
+<div id="achievementLayer">
+  <div class="achv-dim" id="achvDim"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* =========================================================
+   NOTIFICATION BAR
+========================================================= */
+const notifBar = document.getElementById('notifBar');
+const notifText = document.getElementById('notifText');
+const notifIcon = document.getElementById('notifIcon');
+let notifTimer = null;
+function showNotification(text, type, icon, duration){
+  type = type || 'info';
+  icon = icon || (type==='warn' ? '⚠️' : type==='success' ? '✅' : '💬');
+  duration = duration || 3200;
+  notifBar.classList.remove('type-warn','type-success');
+  if(type === 'warn') notifBar.classList.add('type-warn');
+  if(type === 'success') notifBar.classList.add('type-success');
+  notifIcon.textContent = icon;
+  notifText.textContent = text;
+  notifBar.classList.add('show');
+  if(notifTimer) clearTimeout(notifTimer);
+  notifTimer = setTimeout(()=>{ notifBar.classList.remove('show'); }, duration);
+}
+
+/* =========================================================
+   STATE
+========================================================= */
+const state = {
+  startTime: Date.now(),
+  clicks: 0,
+  remaps: 0,
+  questions: 0,
+  settingsChanged: 0,
+  confusion: 10,
+  achievementsUnlocked: new Set(),
+  currentTool: "pencil",
+  color: "#5a4bda",
+  brushSize: 6,
+  opacity: 1,
+  smoothness: 0.5,
+  quality: 1,
+  sensitivity: 0.5,
+  stability: 0.5,
+  strokes: 0,
+  clickCounts: {},
+  toolsEverClicked: new Set(),
+  toolClickStreak: {btn:null, count:0},
+  chatHistory: [],
+  lastUserTopic: null,
+  complaintStreak: 0
+};
+
+/* =========================================================
+   CANVAS SETUP
+========================================================= */
+const canvas = document.getElementById('paintCanvas');
+const ctx = canvas.getContext('2d');
+function fitCanvas(){
+  const holder = document.getElementById('canvasHolder');
+  const ratio = 560/1000;
+  const w = holder.clientWidth;
+  canvas.style.height = (w*ratio)+"px";
+}
+window.addEventListener('resize', fitCanvas);
+fitCanvas();
+ctx.fillStyle = "#ffffff";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
+
+let undoStack = [];
+let redoStack = [];
+function pushHistory(){
+  try{
+    undoStack.push(canvas.toDataURL());
+    if(undoStack.length > 30) undoStack.shift();
+    redoStack = [];
+  }catch(e){}
+}
+function restoreFromDataURL(url){
+  const img = new Image();
+  img.onload = function(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  };
+  img.src = url;
+}
+pushHistory();
+
+function doUndo(){
+  if(undoStack.length <= 1) return;
+  redoStack.push(undoStack.pop());
+  restoreFromDataURL(undoStack[undoStack.length-1]);
+}
+function doRedo(){
+  if(redoStack.length === 0) return;
+  const url = redoStack.pop();
+  undoStack.push(url);
+  restoreFromDataURL(url);
+}
+
+/* =========================================================
+   HIDDEN BEHAVIOR POOLS (Pencil and Brush stay separate categories)
+========================================================= */
+const pencilPool  = ['normal','erase','dotted','spray','zigzag','broken','thin','thick'];
+const brushPool   = ['thick','erase','spray','dotted','shaky','delayed','unusual'];
+const eraserPool  = ['erase','dotted','spray','thin','broken'];
+
+let liveBehavior = {
+  pencil: pencilPool[Math.floor(Math.random()*pencilPool.length)],
+  brush:  brushPool[Math.floor(Math.random()*brushPool.length)],
+  eraser: eraserPool[Math.floor(Math.random()*eraserPool.length)]
+};
+
+let historyMap = { undo:'undo', redo:'redo' };
+const fillActions = ['fill','invertColor','shiftPalette'];
+let fillMap = 'fill';
+const colorActions = ['setColor','randomColor','changeBrushSize'];
+let colorMap = 'setColor';
+const clearActions = ['fullClear','partialClear','flashClear','settingsShuffle'];
+let clearMap = 'fullClear';
+
+function randomizeAllMappings(){
+  liveBehavior.pencil = pencilPool[Math.floor(Math.random()*pencilPool.length)];
+  liveBehavior.brush  = brushPool[Math.floor(Math.random()*brushPool.length)];
+  liveBehavior.eraser = eraserPool[Math.floor(Math.random()*eraserPool.length)];
+  if(Math.random() < 0.6){
+    historyMap = Math.random()<0.5 ? {undo:'undo',redo:'redo'} : {undo:'redo',redo:'undo'};
+  }
+  fillMap = fillActions[Math.floor(Math.random()*fillActions.length)];
+  colorMap = colorActions[Math.floor(Math.random()*colorActions.length)];
+  clearMap = clearActions[Math.floor(Math.random()*clearActions.length)];
+
+  state.remaps++;
+  updateStatsUI();
+  increaseConfusion(4);
+  scheduleAward('chaosIntern');
+  // never announce this — silent by design
+}
+
+function scheduleRandomization(){
+  const delay = 10000 + Math.random()*10000; // 10-20s
+  setTimeout(function(){
+    randomizeAllMappings();
+    scheduleRandomization();
+  }, delay);
+}
+scheduleRandomization();
+
+// Mid-stroke behavior mutation: while actively drawing, the current tool's
+// hidden behavior can silently reassign itself (within its own pool only).
+let midStrokeTimer = null;
+function armMidStrokeMutation(){
+  clearMidStrokeMutation();
+  const tick = ()=>{
+    if(!drawing) return;
+    if(Math.random() < 0.55){
+      mutateCurrentToolBehavior();
+    }
+    midStrokeTimer = setTimeout(tick, 350 + Math.random()*500);
+  };
+  midStrokeTimer = setTimeout(tick, 350 + Math.random()*500);
+}
+function clearMidStrokeMutation(){
+  if(midStrokeTimer){ clearTimeout(midStrokeTimer); midStrokeTimer = null; }
+}
+function mutateCurrentToolBehavior(){
+  const tool = state.currentTool;
+  if(tool === 'pencil'){
+    let next = liveBehavior.pencil;
+    while(next === liveBehavior.pencil && pencilPool.length>1){
+      next = pencilPool[Math.floor(Math.random()*pencilPool.length)];
+    }
+    liveBehavior.pencil = next;
+  } else if(tool === 'brush'){
+    let next = liveBehavior.brush;
+    while(next === liveBehavior.brush && brushPool.length>1){
+      next = brushPool[Math.floor(Math.random()*brushPool.length)];
+    }
+    liveBehavior.brush = next;
+  } else if(tool === 'eraser'){
+    let next = liveBehavior.eraser;
+    while(next === liveBehavior.eraser && eraserPool.length>1){
+      next = eraserPool[Math.floor(Math.random()*eraserPool.length)];
+    }
+    liveBehavior.eraser = next;
+  } else {
+    return;
+  }
+  state.remaps++;
+  updateStatsUI();
+  increaseConfusion(3);
+  strokeTrailBuffer.length = 0; // reset delay buffer so the switch feels abrupt
+}
+
+/* =========================================================
+   DRAWING PRIMITIVES
+========================================================= */
+let drawing = false;
+let lastPos = null;
+let strokeTrailBuffer = [];
+
+function getPos(evt){
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  let clientX, clientY;
+  if(evt.touches && evt.touches.length){
+    clientX = evt.touches[0].clientX;
+    clientY = evt.touches[0].clientY;
+  } else {
+    clientX = evt.clientX;
+    clientY = evt.clientY;
+  }
+  return { x:(clientX-rect.left)*scaleX, y:(clientY-rect.top)*scaleY };
+}
+
+function baseWidth(){
+  const sensMultiplier = 0.6 + state.sensitivity*0.8;
+  return Math.max(1, state.brushSize * sensMultiplier);
+}
+
+function drawLine(p0,p1,color,width,alpha,composite){
+  ctx.save();
+  ctx.globalCompositeOperation = composite || 'source-over';
+  ctx.globalAlpha = alpha!==undefined?alpha:1;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(p0.x,p0.y);
+  ctx.lineTo(p1.x,p1.y);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawDot(p,color,radius,alpha,composite){
+  ctx.save();
+  ctx.globalCompositeOperation = composite || 'source-over';
+  ctx.globalAlpha = alpha!==undefined?alpha:1;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(p.x,p.y,radius,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function renderSegment(p0,p1,behavior){
+  const w = baseWidth();
+  const col = state.color;
+  const op = state.opacity;
+
+  switch(behavior){
+    case 'normal':
+      drawLine(p0,p1,col,w,op);
+      break;
+    case 'thin':
+      drawLine(p0,p1,col,Math.max(1,w*0.35),op);
+      break;
+    case 'thick':
+      drawLine(p0,p1,col,w*2.4,op*0.9);
+      break;
+    case 'erase':
+      drawLine(p0,p1,col,w*1.8,1,'destination-out');
+      break;
+    case 'dotted': {
+      const dist = Math.hypot(p1.x-p0.x,p1.y-p0.y);
+      const gap = Math.max(6, w*1.6);
+      const steps = Math.max(1, Math.floor(dist/gap));
+      for(let i=0;i<=steps;i++){
+        const t = i/steps;
+        const px = p0.x+(p1.x-p0.x)*t;
+        const py = p0.y+(p1.y-p0.y)*t;
+        drawDot({x:px,y:py},col,w*0.45,op);
+      }
+      break;
+    }
+    case 'spray': {
+      const density = 10;
+      for(let i=0;i<density;i++){
+        const ang = Math.random()*Math.PI*2;
+        const rad = Math.random()*w*2.2;
+        const px = p1.x+Math.cos(ang)*rad;
+        const py = p1.y+Math.sin(ang)*rad;
+        drawDot({x:px,y:py},col,Math.max(0.6,w*0.12),op*0.8);
+      }
+      break;
+    }
+    case 'zigzag': {
+      const segs = 5;
+      const dx = (p1.x-p0.x)/segs, dy=(p1.y-p0.y)/segs;
+      const nx = -dy, ny = dx;
+      const len = Math.hypot(nx,ny) || 1;
+      const amp = Math.max(3,w*0.9);
+      ctx.save();
+      ctx.globalAlpha = op;
+      ctx.strokeStyle = col;
+      ctx.lineWidth = Math.max(1,w*0.6);
+      ctx.beginPath();
+      ctx.moveTo(p0.x,p0.y);
+      for(let i=1;i<=segs;i++){
+        const bx = p0.x+dx*i, by = p0.y+dy*i;
+        const off = (i%2===0?1:-1)*amp;
+        ctx.lineTo(bx+(nx/len)*off, by+(ny/len)*off);
+      }
+      ctx.stroke();
+      ctx.restore();
+      break;
+    }
+    case 'broken':
+      if(Math.random() > 0.4){
+        drawLine(p0,p1,col,w,op);
+      }
+      break;
+    case 'shaky': {
+      const jitter = w*0.9;
+      const jp0 = {x:p0.x+(Math.random()-0.5)*jitter, y:p0.y+(Math.random()-0.5)*jitter};
+      const jp1 = {x:p1.x+(Math.random()-0.5)*jitter, y:p1.y+(Math.random()-0.5)*jitter};
+      drawLine(jp0,jp1,col,w*1.3,op*0.95);
+      break;
+    }
+    case 'delayed': {
+      strokeTrailBuffer.push(p1);
+      if(strokeTrailBuffer.length > 14) strokeTrailBuffer.shift();
+      const lag = 8;
+      if(strokeTrailBuffer.length > lag){
+        const a = strokeTrailBuffer[strokeTrailBuffer.length-lag-1];
+        const b = strokeTrailBuffer[strokeTrailBuffer.length-lag];
+        drawLine(a,b,col,w*1.6,op*0.85);
+      }
+      break;
+    }
+    case 'unusual': {
+      const dist = Math.hypot(p1.x-p0.x,p1.y-p0.y) || 1;
+      const nx = -(p1.y-p0.y)/dist, ny = (p1.x-p0.x)/dist;
+      drawLine(p0,p1,col,Math.max(1,w*0.5),op);
+      if(Math.random()<0.5){
+        const tickLen = w*1.4;
+        drawLine(p1,{x:p1.x+nx*tickLen,y:p1.y+ny*tickLen},col,Math.max(1,w*0.4),op*0.8);
+      }
+      break;
+    }
+    default:
+      drawLine(p0,p1,col,w,op);
+  }
+}
+
+function getCurrentBehavior(tool){
+  if(tool==='pencil') return liveBehavior.pencil;
+  if(tool==='brush') return liveBehavior.brush;
+  if(tool==='eraser') return liveBehavior.eraser;
+  return 'normal';
+}
+
+function floodFill(startX, startY, fillColorHex){
+  startX = Math.round(startX); startY = Math.round(startY);
+  const w = canvas.width, h = canvas.height;
+  if(startX<0||startY<0||startX>=w||startY>=h) return;
+  const imgData = ctx.getImageData(0,0,w,h);
+  const data = imgData.data;
+  function idx(x,y){ return (y*w+x)*4; }
+  const startIdx = idx(startX,startY);
+  const targetR = data[startIdx], targetG=data[startIdx+1], targetB=data[startIdx+2], targetA=data[startIdx+3];
+  const fr = parseInt(fillColorHex.slice(1,3),16);
+  const fg = parseInt(fillColorHex.slice(3,5),16);
+  const fb = parseInt(fillColorHex.slice(5,7),16);
+  if(targetR===fr && targetG===fg && targetB===fb && targetA===255) return;
+  const tolerance = 40;
+  function matches(i){
+    return Math.abs(data[i]-targetR)<=tolerance &&
+           Math.abs(data[i+1]-targetG)<=tolerance &&
+           Math.abs(data[i+2]-targetB)<=tolerance &&
+           Math.abs(data[i+3]-targetA)<=tolerance;
+  }
+  const stack = [[startX,startY]];
+  let guard = 0;
+  const maxGuard = w*h;
+  while(stack.length && guard < maxGuard){
+    guard++;
+    const [x,y] = stack.pop();
+    if(x<0||y<0||x>=w||y>=h) continue;
+    const i = idx(x,y);
+    if(!matches(i)) continue;
+    data[i]=fr; data[i+1]=fg; data[i+2]=fb; data[i+3]=255;
+    stack.push([x+1,y]); stack.push([x-1,y]); stack.push([x,y+1]); stack.push([x,y-1]);
+  }
+  ctx.putImageData(imgData,0,0);
+}
+
+/* =========================================================
+   TOOL SELECTION UI
+========================================================= */
+const toolButtons = document.querySelectorAll('.tool-btn');
+const activeToolLabel = document.getElementById('activeToolLabel');
+const strokeCountLabel = document.getElementById('strokeCountLabel');
+
+toolButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    registerClick(btn.dataset.tool);
+    toolButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.currentTool = btn.dataset.tool;
+    activeToolLabel.textContent = btn.textContent.trim();
+
+    if(state.currentTool === 'colorpicker'){
+      applyColorPickerAction();
+    }
+    if(state.currentTool === 'fill'){
+      showNotification("Fill armed. Click the canvas to see what happens.", 'info', '🪣');
+    }
+    scheduleAward('buttonCollector');
+  });
+});
+
+/* =========================================================
+   CANVAS INTERACTION
+========================================================= */
+function handleDown(evt){
+  evt.preventDefault();
+  const pos = getPos(evt);
+
+  if(state.currentTool === 'fill'){
+    const behavior = fillMap;
+    if(behavior === 'fill'){
+      floodFill(pos.x,pos.y,state.color);
+    } else if(behavior === 'invertColor'){
+      const r=255-parseInt(state.color.slice(1,3),16);
+      const g=255-parseInt(state.color.slice(3,5),16);
+      const b=255-parseInt(state.color.slice(5,7),16);
+      const hex = '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+      floodFill(pos.x,pos.y,hex);
+    } else if(behavior === 'shiftPalette'){
+      const hue = Math.floor(Math.random()*360);
+      floodFill(pos.x,pos.y, hslToHex(hue,70,55));
+    }
+    pushHistory();
+    state.strokes++;
+    strokeCountLabel.textContent = state.strokes;
+    increaseConfusion(2);
+    scheduleAward('masterArtist');
+    return;
+  }
+
+  drawing = true;
+  lastPos = pos;
+  strokeTrailBuffer = [pos];
+  const behavior = getCurrentBehavior(state.currentTool);
+  renderSegment(pos, {x:pos.x+0.15,y:pos.y+0.15}, behavior);
+  armMidStrokeMutation();
+}
+function handleMove(evt){
+  if(!drawing) return;
+  evt.preventDefault();
+  const pos = getPos(evt);
+  const behavior = getCurrentBehavior(state.currentTool);
+  renderSegment(lastPos,pos,behavior);
+  lastPos = pos;
+}
+function handleUp(){
+  if(drawing){
+    drawing = false;
+    clearMidStrokeMutation();
+    pushHistory();
+    state.strokes++;
+    strokeCountLabel.textContent = state.strokes;
+    scheduleAward('masterArtist');
+  }
+}
+canvas.addEventListener('mousedown', handleDown);
+canvas.addEventListener('mousemove', handleMove);
+window.addEventListener('mouseup', handleUp);
+canvas.addEventListener('touchstart', handleDown, {passive:false});
+canvas.addEventListener('touchmove', handleMove, {passive:false});
+canvas.addEventListener('touchend', handleUp);
+
+function hslToHex(h,s,l){
+  s/=100; l/=100;
+  const k = n => (n + h/30) % 12;
+  const a = s * Math.min(l, 1-l);
+  const f = n => l - a*Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n),1)));
+  const toHex = x => Math.round(255*x).toString(16).padStart(2,'0');
+  return '#'+toHex(f(0))+toHex(f(8))+toHex(f(4));
+}
+
+/* =========================================================
+   COLOR PICKER ACTION
+========================================================= */
+function applyColorPickerAction(){
+  const behavior = colorMap;
+  if(behavior === 'setColor'){
+    state.color = document.getElementById('colorInput').value;
+    showNotification("Color applied. Probably correctly.", 'success', '🎯');
+  } else if(behavior === 'randomColor'){
+    const hue = Math.floor(Math.random()*360);
+    const hex = hslToHex(hue,65,55);
+    state.color = hex;
+    document.getElementById('colorInput').value = hex;
+    showNotification("A color has been chosen for you.", 'warn', '🎯');
+  } else if(behavior === 'changeBrushSize'){
+    const newSize = 2 + Math.floor(Math.random()*30);
+    state.brushSize = newSize;
+    document.getElementById('brushSize').value = newSize;
+    document.getElementById('brushSizeVal').textContent = newSize;
+    showNotification("Color Picker adjusted your brush size instead.", 'warn', '🎯');
+  }
+  increaseConfusion(3);
+}
+document.getElementById('colorInput').addEventListener('change', ()=>{
+  registerClick('colorInputRaw');
+  state.settingsChanged++;
+  updateStatsUI();
+  applyColorPickerAction();
+});
+
+/* =========================================================
+   UNDO / REDO / SAVE / CLEAR
+========================================================= */
+document.getElementById('undoBtn').addEventListener('click', ()=>{
+  registerClick('undo');
+  const behavior = historyMap.undo;
+  if(behavior === 'undo') doUndo(); else doRedo();
+  increaseConfusion(3);
+  scheduleAward('trustIssuesCheck');
+});
+document.getElementById('redoBtn').addEventListener('click', ()=>{
+  registerClick('redo');
+  const behavior = historyMap.redo;
+  if(behavior === 'redo') doRedo(); else doUndo();
+  increaseConfusion(3);
+  scheduleAward('trustIssuesCheck');
+});
+
+const saveSequence = [
+  "Saving masterpiece...",
+  "Analyzing artistic quality...",
+  "Questioning your artistic decisions...",
+  "Save failed successfully."
+];
+document.getElementById('saveBtn').addEventListener('click', ()=>{
+  registerClick('save');
+  runSaveSequence();
+  scheduleAward('firstMistake');
+});
+function runSaveSequence(){
+  let i = 0;
+  showNotification(saveSequence[i], 'info', '💾', 1500);
+  const iv = setInterval(()=>{
+    i++;
+    if(i < saveSequence.length){
+      showNotification(saveSequence[i], 'info', '💾', 1500);
+    } else {
+      clearInterval(iv);
+      showNotification("Your masterpiece has been successfully not saved.", 'warn', '💾', 3600);
+    }
+  },1500);
+}
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  registerClick('clear');
+  const behavior = clearMap;
+  if(behavior === 'fullClear'){
+    if(confirm("Are you absolutely, philosophically certain you wish to clear this masterpiece?")){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle="#ffffff";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      pushHistory();
+      showNotification("Canvas cleared. Closure achieved.", 'success', '🗑️');
+    }
+  } else if(behavior === 'partialClear'){
+    const w = canvas.width, h = canvas.height;
+    const cw = w*0.4, ch = h*0.4;
+    const cx = Math.random()*(w-cw), cy = Math.random()*(h-ch);
+    ctx.clearRect(cx,cy,cw,ch);
+    ctx.fillStyle="#ffffff";
+    ctx.fillRect(cx,cy,cw,ch);
+    pushHistory();
+    showNotification("A portion of your art has been generously removed.", 'warn', '🗑️');
+  } else if(behavior === 'flashClear'){
+    const snapshot = canvas.toDataURL();
+    ctx.fillStyle="#ffffff";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    setTimeout(()=>{ restoreFromDataURL(snapshot); }, 500);
+    showNotification("Your art briefly considered leaving, then reconsidered.", 'info', '🗑️');
+  } else if(behavior === 'settingsShuffle'){
+    const size = 2+Math.floor(Math.random()*30);
+    state.brushSize = size;
+    document.getElementById('brushSize').value = size;
+    document.getElementById('brushSizeVal').textContent = size;
+    showNotification("Clear declined. Adjusted your settings instead.", 'warn', '🗑️');
+  }
+  increaseConfusion(3);
+  scheduleAward('lostAgain');
+});
+
+/* =========================================================
+   SETTINGS BEHAVIOR
+========================================================= */
+const settingBigMessages = [
+  "Setting successfully changed. Probably.",
+  "That setting definitely affected something.",
+  "Your configuration has been configured.",
+  "Change accepted. Reason unknown.",
+  "Excellent. Something changed.",
+  "Configuration successful. We think."
+];
+function randomSettingMsg(){ return settingBigMessages[Math.floor(Math.random()*settingBigMessages.length)]; }
+
+function registerSettingChange(msg, type){
+  state.settingsChanged++;
+  updateStatsUI();
+  increaseConfusion(2);
+  showNotification(msg || randomSettingMsg(), type || 'info', '⚙️');
+}
+
+document.getElementById('brushSize').addEventListener('input', (e)=>{
+  const val = parseInt(e.target.value,10);
+  const roll = Math.random();
+  if(roll < 0.55){
+    state.brushSize = val;
+    document.getElementById('brushSizeVal').textContent = val;
+  } else if(roll < 0.8){
+    const op = Math.max(0.05, val/40);
+    state.opacity = op;
+    document.getElementById('opacitySlider').value = Math.round(op*100);
+    document.getElementById('opacityVal').textContent = Math.round(op*100)+'%';
+  }
+});
+document.getElementById('brushSize').addEventListener('change', (e)=>{
+  registerSettingChange(Math.random()<0.7 ? randomSettingMsg() : "Brush Size adjusted a different property instead.");
+});
+
+document.getElementById('opacitySlider').addEventListener('input', (e)=>{
+  const val = parseInt(e.target.value,10);
+  const roll = Math.random();
+  if(roll < 0.4){
+    state.opacity = val/100;
+    document.getElementById('opacityVal').textContent = val+'%';
+  } else if(roll < 0.7){
+    const size = Math.max(1, Math.round(val/2.5));
+    state.brushSize = size;
+    document.getElementById('brushSize').value = size;
+    document.getElementById('brushSizeVal').textContent = size;
+    document.getElementById('opacityVal').textContent = val+'%';
+  } else {
+    document.getElementById('opacityVal').textContent = val+'%';
+  }
+});
+document.getElementById('opacitySlider').addEventListener('change', ()=>{
+  registerSettingChange(Math.random()<0.35 ? "Opacity is currently emotionally unavailable." : randomSettingMsg());
+});
+
+document.getElementById('smoothSlider').addEventListener('input',(e)=>{
+  const val = parseInt(e.target.value,10);
+  const roll = Math.random();
+  state.smoothness = roll < 0.5 ? val/100 : 1-(val/100);
+  document.getElementById('smoothVal').textContent = val+'%';
+});
+document.getElementById('smoothSlider').addEventListener('change', ()=>{
+  registerSettingChange(Math.random()<0.5 ? "Smoothness made your brush noticeably rougher." : randomSettingMsg());
+});
+
+document.getElementById('qualitySlider').addEventListener('input',(e)=>{
+  const val = parseInt(e.target.value,10);
+  state.quality = val;
+  const labels = ['Draft','Standard','Ultra (Unstable)'];
+  document.getElementById('qualityVal').textContent = labels[val];
+});
+document.getElementById('qualitySlider').addEventListener('change', (e)=>{
+  registerSettingChange(state.quality===2 ? "Ultra quality engaged. Strange results likely." : randomSettingMsg());
+});
+
+document.getElementById('sensSlider').addEventListener('input',(e)=>{
+  const val = parseInt(e.target.value,10);
+  state.sensitivity = val/100;
+  document.getElementById('sensVal').textContent = val+'%';
+});
+document.getElementById('sensSlider').addEventListener('change', ()=>{
+  registerSettingChange("Canvas Sensitivity altered stroke responsiveness unpredictably.");
+});
+
+document.getElementById('stabSlider').addEventListener('input',(e)=>{
+  const val = parseInt(e.target.value,10);
+  state.stability = val/100;
+  document.getElementById('stabVal').textContent = val+'%';
+});
+document.getElementById('stabSlider').addEventListener('change', ()=>{
+  registerSettingChange(Math.random()<0.5 ? "Artistic Stability acknowledges your input." : "Artistic Stability remains conceptually unaffected.");
+});
+
+/* =========================================================
+   CHALLENGE BUTTON
+========================================================= */
+const challenges = [
+  "Draw a potato with Wi-Fi.",
+  "Draw something that has no purpose.",
+  "Draw your confusion.",
+  "Draw a suspicious banana.",
+  "Draw a chair for someone who doesn't exist.",
+  "Draw something that would fail an interview.",
+  "Draw a cloud that pays taxes.",
+  "Draw a door with commitment issues.",
+  "Draw the sound of silence, but louder.",
+  "Draw a sandwich that regrets its choices.",
+  "Draw a shadow that showed up late.",
+  "Draw a rectangle pretending to be interesting."
+];
+document.getElementById('challengeBtn').addEventListener('click', ()=>{
+  registerClick('challenge');
+  const pick = challenges[Math.floor(Math.random()*challenges.length)];
+  document.getElementById('challengeText').textContent = pick;
+  increaseConfusion(1);
+});
+
+/* =========================================================
+   CONFUSION METER
+========================================================= */
+const meterFill = document.getElementById('meterFill');
+const meterPct = document.getElementById('meterPct');
+const meterMsg = document.getElementById('meterMsg');
+
+const confusionMsgsUp = [
+  "Confusion detected.",
+  "Understanding decreasing.",
+  "You're getting close.",
+  "Pattern recognition detected.",
+  "Congratulations. You understand less than before."
+];
+const confusionMsgsDown = [
+  "A brief moment of clarity.",
+  "Confusion slightly recalibrated.",
+  "Temporary understanding detected."
+];
+
+let maxConfusionFired = false;
+function increaseConfusion(amount){
+  state.confusion = Math.min(100, state.confusion + amount);
+  renderConfusion();
+  if(state.confusion >= 100){
+    meterMsg.textContent = "CONFUSION LEVEL: MAXIMUM";
+    if(!maxConfusionFired){
+      maxConfusionFired = true;
+      showNotification("CONFUSION LEVEL: MAXIMUM.", 'warn', '🌀', 4200);
+      unlockAchievement('maxConfusion');
+    }
+  } else {
+    meterMsg.textContent = confusionMsgsUp[Math.floor(Math.random()*confusionMsgsUp.length)];
+  }
+}
+function decreaseConfusion(amount){
+  state.confusion = Math.max(0, state.confusion - amount);
+  if(state.confusion < 100) maxConfusionFired = false;
+  renderConfusion();
+  meterMsg.textContent = confusionMsgsDown[Math.floor(Math.random()*confusionMsgsDown.length)];
+}
+function renderConfusion(){
+  meterFill.style.width = state.confusion+"%";
+  meterPct.textContent = Math.round(state.confusion);
+}
+setInterval(()=>{
+  if(Math.random() < 0.35){
+    decreaseConfusion(2 + Math.random()*4);
+  }
+}, 9000);
+
+/* =========================================================
+   CLICK TRACKING / STATS
+========================================================= */
+function registerClick(key){
+  state.clicks++;
+  state.clickCounts[key] = (state.clickCounts[key]||0)+1;
+  state.toolsEverClicked.add(key);
+
+  if(state.toolClickStreak.btn === key){
+    state.toolClickStreak.count++;
+  } else {
+    state.toolClickStreak = {btn:key, count:1};
+  }
+  if(state.toolClickStreak.count >= 10){
+    scheduleAward('trustIssues');
+  }
+  if(state.toolClickStreak.count >= 2 && state.toolClickStreak.count % 4 === 0){
+    increaseConfusion(2);
+  }
+
+  const drawTools = ['pencil','eraser','brush','fill','colorpicker'];
+  if(drawTools.includes(key)){
+    scheduleAward('buttonCollector');
+  }
+  updateStatsUI();
+}
+
+function updateStatsUI(){
+  document.getElementById('statClicks').textContent = state.clicks;
+  document.getElementById('statRemaps').textContent = state.remaps;
+  document.getElementById('statQuestions').textContent = state.questions;
+  document.getElementById('statSettings').textContent = state.settingsChanged;
+  document.getElementById('statAch').textContent = state.achievementsUnlocked.size + " / 12";
+}
+
+function formatTime(ms){
+  const s = Math.floor(ms/1000);
+  const m = Math.floor(s/60);
+  const rem = s%60;
+  return m+":"+String(rem).padStart(2,'0');
+}
+setInterval(()=>{
+  document.getElementById('statTime').textContent = formatTime(Date.now()-state.startTime);
+  const mins = (Date.now()-state.startTime)/60000;
+  if(mins >= 5){ scheduleAward('whyStillHere'); }
+}, 1000);
+
+/* =========================================================
+   ACHIEVEMENTS
+========================================================= */
+const achievementDefs = {
+  firstMistake:      { icon:'🏆', name:'First Mistake', desc:'Clicked a button and immediately regretted it.' },
+  professionalConfusion: { icon:'🏆', name:'Professional Confusion', desc:'Asked Confusion AI for help 5 times.' },
+  trustIssues:        { icon:'🏆', name:'Trust Issues', desc:'Clicked the same button 10 times.' },
+  masterArtist:        { icon:'🏆', name:'Master Artist', desc:'Successfully managed to draw something.' },
+  buttonCollector:      { icon:'🏆', name:'Button Collector', desc:'Clicked every tool at least once.' },
+  lostAgain:          { icon:'🏆', name:'Lost Again', desc:'Experienced repeated unexpected tool behavior.' },
+  aiVictim:           { icon:'🏆', name:'AI Victim', desc:'Successfully confused Confusion AI.' },
+  whyStillHere:        { icon:'🏆', name:'Why Are You Still Here?', desc:'Stayed in ADIOOD ADI for 5 minutes.' },
+  impossibleAchievement: { icon:'🏆', name:'Impossible Achievement', desc:'Attempted to understand the controls.' },
+  chaosIntern:         { icon:'🏆', name:'Chaos Intern', desc:'Survived multiple tool remappings.' },
+  maxConfusion:        { icon:'🏆', name:'Peak Bewilderment', desc:'Reached maximum confusion level.' },
+  reportReader:        { icon:'🏆', name:'Report Reader', desc:'Opened the entirely unnecessary session report.' }
+};
+const achievementOrder = Object.keys(achievementDefs);
+
+const cabinetGrid = document.getElementById('cabinetGrid');
+achievementOrder.forEach(key=>{
+  const def = achievementDefs[key];
+  const el = document.createElement('div');
+  el.className = 'cab-item';
+  el.id = 'cab-'+key;
+  el.innerHTML = `${def.icon}<span class="cab-name">${def.name}</span>`;
+  cabinetGrid.appendChild(el);
+});
+
+const buttonCollectorTargets = ['pencil','eraser','brush','colorpicker','fill'];
+function scheduleAward(key){
+  if(key === 'buttonCollector'){
+    const allClicked = buttonCollectorTargets.every(t=>state.toolsEverClicked.has(t));
+    if(!allClicked) return;
+  }
+  if(key === 'trustIssuesCheck'){
+    if(Math.random() < 0.2) unlockAchievement('impossibleAchievement');
+    return;
+  }
+  unlockAchievement(key);
+}
+
+function unlockAchievement(key){
+  if(!achievementDefs[key]) return;
+  if(state.achievementsUnlocked.has(key)) return;
+  state.achievementsUnlocked.add(key);
+  const def = achievementDefs[key];
+  const cabEl = document.getElementById('cab-'+key);
+  if(cabEl) cabEl.classList.add('unlocked');
+  updateStatsUI();
+  showAchievementToast(def);
+}
+
+function showAchievementToast(def){
+  const dim = document.getElementById('achvDim');
+  dim.classList.add('on');
+  const layer = document.getElementById('achievementLayer');
+  const toast = document.createElement('div');
+  toast.className = 'achv-toast';
+  toast.innerHTML = `
+    <div class="badge-wrap">${def.icon}</div>
+    <div class="txt">
+      <div class="eyebrow">ACHIEVEMENT UNLOCKED</div>
+      <div class="name">${def.name.toUpperCase()}</div>
+      <div class="desc">${def.desc}</div>
+    </div>
+  `;
+  layer.appendChild(toast);
+  requestAnimationFrame(()=>{ toast.classList.add('show'); });
+
+  for(let i=0;i<10;i++){
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = 3+Math.random()*4;
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.left = (30+Math.random()*260)+'px';
+    s.style.top = (20+Math.random()*60)+'px';
+    const dx = (Math.random()-0.5)*120;
+    const dy = (Math.random()-0.5)*120;
+    s.style.setProperty('--dx', dx+'px');
+    s.style.setProperty('--dy', dy+'px');
+    s.style.animationDelay = (Math.random()*0.2)+'s';
+    toast.appendChild(s);
+  }
+
+  try{
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(AudioCtx){
+      const ac = new AudioCtx();
+      const now = ac.currentTime;
+      [660,880,1180].forEach((freq,i)=>{
+        const o = ac.createOscillator();
+        const g = ac.createGain();
+        o.type = 'triangle';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.0001, now+i*0.08);
+        g.gain.exponentialRampToValueAtTime(0.08, now+i*0.08+0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now+i*0.08+0.25);
+        o.connect(g); g.connect(ac.destination);
+        o.start(now+i*0.08);
+        o.stop(now+i*0.08+0.3);
+      });
+    }
+  }catch(e){}
+
+  setTimeout(()=>{
+    toast.classList.remove('show');
+    dim.classList.remove('on');
+    setTimeout(()=>toast.remove(), 500);
+  }, 3600);
+}
+
+/* =========================================================
+   CONFUSION AI CHATBOT
+========================================================= */
+const chatFab = document.getElementById('chatFab');
+const chatPanel = document.getElementById('chatPanel');
+const chatBody = document.getElementById('chatBody');
+const chatInput = document.getElementById('chatInput');
+const chatStatus = document.getElementById('chatStatus');
+
+function openChat(){
+  chatPanel.classList.add('open');
+  chatFab.classList.add('hidden');
+}
+function closeChat(){
+  chatPanel.classList.remove('open');
+  chatFab.classList.remove('hidden');
+}
+chatFab.addEventListener('click', openChat);
+document.getElementById('chatMinBtn').addEventListener('click', closeChat);
+
+function addMsg(text, who){
+  const el = document.createElement('div');
+  el.className = 'msg '+who;
+  el.textContent = text;
+  chatBody.appendChild(el);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return el;
+}
+
+addMsg("Hello. I am Confusion AI. I am probably here to help, in the loosest possible sense of the word 'help'.", 'bot');
+
+const statusMessages = ["Probably online","Online, allegedly","Status: uncertain","Definitely here (unverified)","Online-ish"];
+setInterval(()=>{
+  if(Math.random()<0.3) chatStatus.textContent = statusMessages[Math.floor(Math.random()*statusMessages.length)];
+}, 12000);
+
+const responses = {
+  greeting: [
+    "Hello. I was engineered specifically to be unhelpful in a friendly way.",
+    "Welcome. Manage your expectations accordingly."
+  ],
+  help: [
+    "You have reached the correct AI for confusion and the wrong AI for solutions.",
+    "I can offer moral support, but not actual support.",
+    "Help is a strong word. Let's go with 'presence'."
+  ],
+  whatHappened: [
+    "What happened is exactly what was supposed to happen. Whether that's comforting is your call.",
+    "Something occurred. I've chosen not to elaborate.",
+    "That's the correct question. I don't have the correct answer."
+  ],
+  drawing: [
+    "You're asking a drawing application how to draw. That's like asking a fish how to swim while holding it underwater.",
+    "Drawing is simple: pick a tool, click, and hope for the best. Mostly the second part.",
+    "The canvas is white. The rest is between you and fate."
+  ],
+  pencil: [
+    "You have discovered the revolutionary Pencil Eraser technology. Unfortunately, nobody requested it.",
+    "You trusted a button called Pencil in this application. That's on you.",
+    "The Pencil does something. I never said what.",
+    "Ah, the Pencil. A bold choice with unpredictable consequences."
+  ],
+  eraser: [
+    "You're holding it. Probably. At this point even I'm not confident.",
+    "It's probably the button that looks like an eraser. But considering your recent performance, I wouldn't trust appearances.",
+    "The Eraser erases things. Or it doesn't. It's more of a philosophy than a feature.",
+    "Erasing implies undoing a mistake. Here, it might just be a new mistake."
+  ],
+  brush: [
+    "It is working perfectly. Your expectations are the thing that stopped working.",
+    "The Brush is for people who found the Pencil too predictable.",
+    "Brush behavior is currently... a surprise, even to me."
+  ],
+  color: [
+    "Colors exist. Whether the Color tool respects your choice is a separate question entirely.",
+    "You picked a color. The application heard a suggestion."
+  ],
+  fill: [
+    "Fill will fill something. The 'what' is the exciting part.",
+    "Bucket tools are supposed to be reliable. This one attended a different school of thought."
+  ],
+  undo: [
+    "Undo may undo. Or it may proudly redo. It contains multitudes.",
+    "You tried Undo. Bold. Unnecessary. Admirable."
+  ],
+  redo: [
+    "Redo exists to make Undo's life difficult. Occasionally it succeeds.",
+    "Redo is Undo's rebellious sibling."
+  ],
+  save: [
+    "You don't. We already tried emotionally.",
+    "There's a Save button. Your optimism is impressive.",
+    "Saving is a beautiful dream we all share here."
+  ],
+  clear: [
+    "Clear might clear everything, something, or your patience.",
+    "Clearing your canvas is easy. Clearing your expectations is the real challenge."
+  ],
+  settings: [
+    "The settings panel is legally required to exist. Its behavior is not legally required to make sense.",
+    "Every setting does something. I never promised it would be the thing you expect."
+  ],
+  confusion: [
+    "Excellent. ConfusionPaint has achieved its primary objective.",
+    "Congratulations. You've correctly identified the main feature.",
+    "Confusion is not a bug. It is the entire product roadmap."
+  ],
+  complaint: [
+    "Thank you for correctly identifying the product.",
+    "Finally, someone understands the project.",
+    "Your feedback has been noted, filed, and gently ignored.",
+    "I hear your frustration. I do not have a solution for it."
+  ],
+  praise: [
+    "Thank you. I will use this compliment to justify more confusing behavior.",
+    "How kind. Completely undeserved, but kind."
+  ],
+  understanding: [
+    "That's concerning. Give it a few seconds.",
+    "Understanding is temporary here. Enjoy it while it lasts."
+  ],
+  failure: [
+    "It is working. You are simply expecting competence from ADIOOD ADI.",
+    "This isn't broken. This is the intended experience, unfortunately."
+  ],
+  whyQ: [
+    "Why is a question ADIOOD ADI was specifically designed to never answer.",
+    "Why does anything happen here? Nobody knows. Least of all me."
+  ],
+  howQ: [
+    "How you do it is less important than how confused you'll be afterward.",
+    "The 'how' is classified. The 'why' is worse."
+  ],
+  repeated: [
+    "The fact that you're asking me twice suggests the first answer was not useful. Excellent progress.",
+    "Asking again won't change my answer, but I admire the persistence."
+  ],
+  generic: [
+    "Interesting input. I've chosen to respond with confidence rather than accuracy.",
+    "That's a great question for an AI more capable than me.",
+    "I've analyzed your message. I've decided not to help.",
+    "Noted. Filed under 'problems for future you'."
+  ]
+};
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function categorize(msg){
+  const m = msg.toLowerCase();
+  if(/hello|hi there|^hi\b|hey/.test(m)) return 'greeting';
+  if(/what happened|what just happened/.test(m)) return 'whatHappened';
+  if(/useless|hate|bad|terrible|worst|stupid/.test(m)) return 'complaint';
+  if(/good job|great|nice|love this|awesome|amazing/.test(m)) return 'praise';
+  if(/i understand|makes sense|i get it|got it/.test(m)) return 'understanding';
+  if(/not working|doesn'?t work|broken|isn'?t working|why isn'?t/.test(m)) return 'failure';
+  if(/pencil/.test(m)) return 'pencil';
+  if(/eraser/.test(m)) return 'eraser';
+  if(/brush/.test(m)) return 'brush';
+  if(/colou?r/.test(m)) return 'color';
+  if(/fill/.test(m)) return 'fill';
+  if(/undo/.test(m)) return 'undo';
+  if(/redo/.test(m)) return 'redo';
+  if(/save/.test(m)) return 'save';
+  if(/clear/.test(m)) return 'clear';
+  if(/setting/.test(m)) return 'settings';
+  if(/confus/.test(m)) return 'confusion';
+  if(/draw/.test(m)) return 'drawing';
+  if(/help/.test(m)) return 'help';
+  if(/^why\b|\bwhy\b/.test(m)) return 'whyQ';
+  if(/^how\b|\bhow do i\b/.test(m)) return 'howQ';
+  return 'generic';
+}
+
+function respondTo(userMsg){
+  state.questions++;
+  updateStatsUI();
+  increaseConfusion(3);
+
+  const cat = categorize(userMsg);
+  let isRepeat = (state.lastUserTopic === cat);
+  state.lastUserTopic = cat;
+
+  if(/useless|hate|bad|terrible|worst|stupid/.test(userMsg.toLowerCase())){
+    state.complaintStreak++;
+  } else {
+    state.complaintStreak = Math.max(0, state.complaintStreak-1);
+  }
+
+  let pool = isRepeat && responses.repeated ? responses.repeated : (responses[cat] || responses.generic);
+  let reply = pick(pool);
+
+  if(state.complaintStreak >= 3){
+    reply += " " + pick([
+      "At this point I'm just going to assume you enjoy this.",
+      "Your persistence in complaining rivals your persistence in staying.",
+      "I've upgraded your sarcasm tier. Congratulations."
+    ]);
+  }
+
+  if(state.questions >= 5){
+    scheduleAward('professionalConfusion');
+  }
+  if(state.questions >= 1 && Math.random() < 0.15){
+    unlockAchievement('aiVictim');
+  }
+  if(/why is this confusing|nobody understands|impossible to understand/.test(userMsg.toLowerCase())){
+    unlockAchievement('impossibleAchievement');
+  }
+
+  const typingEl = addMsg("Confusion AI is thinking...", 'typing');
+  const delay = 500 + Math.random()*900;
+  setTimeout(()=>{
+    typingEl.remove();
+    addMsg(reply, 'bot');
+  }, delay);
+}
+
+function sendChat(){
+  const val = chatInput.value.trim();
+  if(!val) return;
+  addMsg(val, 'user');
+  chatInput.value = '';
+  respondTo(val);
+}
+document.getElementById('chatSendBtn').addEventListener('click', sendChat);
+chatInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') sendChat();
+});
+
+/* =========================================================
+   SESSION REPORT MODAL
+========================================================= */
+const reportOverlay = document.getElementById('reportOverlay');
+document.getElementById('reportBtn').addEventListener('click', ()=>{
+  registerClick('report');
+  document.getElementById('repTime').textContent = formatTime(Date.now()-state.startTime);
+  document.getElementById('repClicks').textContent = state.clicks;
+  document.getElementById('repRemaps').textContent = state.remaps;
+  document.getElementById('repQuestions').textContent = state.questions;
+  document.getElementById('repAch').textContent = state.achievementsUnlocked.size + ' / 12';
+  document.getElementById('repSettings').textContent = state.settingsChanged;
+  reportOverlay.classList.add('open');
+  scheduleAward('reportReader');
+});
+document.getElementById('closeReportBtn').addEventListener('click', ()=>{
+  reportOverlay.classList.remove('open');
+});
+reportOverlay.addEventListener('click',(e)=>{
+  if(e.target === reportOverlay) reportOverlay.classList.remove('open');
+});
+
+/* =========================================================
+   INIT
+========================================================= */
+updateStatsUI();
+renderConfusion();
+setTimeout(()=>{ showNotification("Welcome to ADIOOD ADI. Everything here is exactly as reliable as it looks.", 'info', '🎨', 4200); }, 500);
+
+})();
+</script>
+</body>
+</html>
