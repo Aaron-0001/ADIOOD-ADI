@@ -1,4 +1,4 @@
-
+<img width="1280" height="640" alt="git (1)" src="https://github.com/user-attachments/assets/8920b256-2ba8-4988-b824-5351134eb4bd" />
 
 
 # ADIOOD ADI 🎯
@@ -87,7 +87,7 @@ Mozilla Firefox
 
 # Screenshots
 
-![Screenshot1](Screenshots/Screenshot1.png)
+![Screenshot1](Screenshots/
 
 **Main Interface** – Shows the professional Paint-style interface with the toolbar, drawing canvas, settings, and Confusion Meter.
 
