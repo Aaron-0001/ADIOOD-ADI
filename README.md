@@ -134,11 +134,7 @@ User selects a tool → Hidden function is assigned → User interacts with the 
 ## Project Demo
 
 # Video
-
-**Demo Video:**
-[Add your uploaded demo video link here]
-
-**The demo demonstrates:**
+https://drive.google.com/file/d/1FD68utXrLlvWu9wx5Ni__i7oyXqPOcif/view?usp=sharing
 
 * Normal-looking Paint interface
 * Unpredictable drawing tool behavior
