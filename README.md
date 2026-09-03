@@ -183,7 +183,7 @@ User selects a tool → Hidden function is assigned → User interacts with the 
 
 **ConfusePaint is a drawing application where the interface tells you what a tool is called, but gives absolutely no guarantee about what it will do.**
 
-> **“I know what this button says. I just don't know what it's going to do.”** 🤯🎨
+
 
 
 
