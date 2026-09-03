@@ -87,7 +87,7 @@ Mozilla Firefox
 
 # Screenshots
 
-![Screenshot1](Screenshots/Screenshot1.png)
+![Screenshot1](Screenshot1.png)
 
 **Main Interface** – Shows the professional Paint-style interface with the toolbar, drawing canvas, settings, and Confusion Meter.
 
